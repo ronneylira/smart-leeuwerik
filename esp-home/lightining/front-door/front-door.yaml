@@ -1,0 +1,21 @@
+esphome:
+    name: frontdoorlight
+    platform: ESP8266
+    board: nodemcu
+
+<<: !include secrets.yaml
+    
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+<<: !include ota.yaml
+
+switch:
+    - platform: gpio
+      name: "Living Room led"
+      pin: 2
