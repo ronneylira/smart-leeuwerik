@@ -26,6 +26,7 @@ services:
       DNS2: ''
       IPv6: 'false'
       DNSMASQ_LISTENING: all
+      VIRTUAL_HOST: piehole.ronneylira.com
       TZ: ${TZ}
       WEBPASSWORD : ${WEBPASSWORD} # WEBPASSWORD: 'set a secure password here or it will be random'
     networks:
@@ -35,6 +36,8 @@ services:
     volumes:
       - './etc-pihole/:/etc/pihole/'
       - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
+      #- './etc-letsencrypt/live/piehole.ronneylira.com:/etc/certs/'
+      #- './external.conf:/etc/lighttpd/external.conf'
       # run `touch ./var-log/pihole.log` first unless you like errors
       # - './var-log/pihole.log:/var/log/pihole.log'
     dns:
@@ -46,6 +49,18 @@ services:
       - NET_ADMIN
     restart: unless-stopped
 
+  dnsrobocert:
+    image: adferrand/dnsrobocert
+    container_name: dnsrobocert
+    env_file: .env
+    volumes:
+      - $ROOT/dnsrobocert.yml:/etc/letsencrypt/dnsrobocert.yml
+      - ./etc-letsencrypt:/etc/letsencrypt
+      - ./config.yml:/etc/dnsrobocert/config.yml:ro
+    environment:
+      - VERSION=latest
+    restart: always  
+
   home-assistant:
     container_name: home-assistant
     image: homeassistant/home-assistant:stable
@@ -53,8 +68,8 @@ services:
       - "8123:8123"
     volumes:
       # Local path where your home assistant config will be stored
-      - /etc-home-assistant:/config
-      - /etc/localtime:/etc/localtime:ro
+      - ./etc-home-assistant:/config
+      - ./etc/localtime:/etc/localtime:ro
     environment:
       TZ : ${TZ}
     restart: unless-stopped
@@ -62,10 +77,30 @@ services:
       pihole_net:
         ipv4_address: 10.0.0.4
 #    user: "${LOCAL_USER}:${LOCAL_USER}"
-
+  # nginx:
+  #   image: nginx:1.15-alpine
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./data/nginx:/etc/nginx/conf.d
+  #     - ./data/certbot/conf:/etc/letsencrypt
+  #     - ./data/certbot/www:/var/www/certbot
+  #     - ./init-letsencrypt.sh:/tmp/init-letsencrypt.sh
+  # certbot:
+  #   image: certbot/certbot
+  #   volumes:
+  #     - ./data/certbot/conf:/etc/letsencrypt
+  #     - ./data/certbot/www:/var/www/certbot
 networks:
   pihole_net:
     driver: bridge
     ipam:
      config:
        - subnet: 10.0.0.0/29
+
+volumes:
+  pihole_etc:
+  pihole_dnsmasq:
+  le_certs:
+  pihole_certs:

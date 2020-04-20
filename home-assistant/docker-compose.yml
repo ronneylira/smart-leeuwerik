@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  home-assistant:
+    container_name: home-assistant
+    image: homeassistant/home-assistant:stable
+    ports:
+      - "8123:8123"
+    volumes:
+      # Local path where your home assistant config will be stored
+      - ./etc-home-assistant:/config
+      - ./etc-home-assistant/localtime:/etc/localtime:ro
+    environment:
+      TZ : ${TZ}
+    restart: unless-stopped
+    networks:
+      home_assistant:
+        ipv4_address: 192.169.2.1
+#    user: "${LOCAL_USER}:${LOCAL_USER}"
+  # nginx:
+  #   image: nginx:1.15-alpine
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./data/nginx:/etc/nginx/conf.d
+  #     - ./data/certbot/conf:/etc/letsencrypt
+  #     - ./data/certbot/www:/var/www/certbot
+  #     - ./init-letsencrypt.sh:/tmp/init-letsencrypt.sh
+  # certbot:
+  #   image: certbot/certbot
+  #   volumes:
+  #     - ./data/certbot/conf:/etc/letsencrypt
+  #     - ./data/certbot/www:/var/www/certbot
+
+networks:
+  home_assistant:
+    ipam:
+      driver: default
+      config:
+          - subnet: 192.169.2.0/16

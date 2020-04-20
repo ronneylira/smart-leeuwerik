@@ -1,9 +1,9 @@
 .env
 
-etc-dnsmasq.d/*
-etc-pihole/*
-etc-home-assistant/*
-etc-letsencrypt/*
+**/etc-dnsmasq.d/*
+**/etc-pihole/*
+**/etc-home-assistant/*
+**/etc-letsencrypt/*
 
 **/secrets.yaml
 **/.esphome/
