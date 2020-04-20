@@ -1,3 +1,16 @@
 .env
+
 etc-dnsmasq.d/*
 etc-pihole/*
+etc-home-assistant/*
+etc-letsencrypt/*
+
+**/secrets.yaml
+**/.esphome/
+**/.pioenvs/
+**/.piolibdeps/
+**/lib/
+**/src/
+**/platformio.ini
+**/ota.yaml
+**.gitignore
