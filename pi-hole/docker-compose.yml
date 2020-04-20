@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  cloudflared:
+    container_name: cloudflared
+    image: visibilityspots/cloudflared:amd64
+    restart: unless-stopped
+    #user: root
+    networks:
+      pihole_net:
+        ipv4_address: 10.0.0.2
+
+  pi-hole:
+    container_name: pi-hole
+    image: pihole/pihole:latest
+    # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "41222:80/tcp"
+      - "42223:443/tcp"
+    environment:
+      ServerIP: 10.0.0.3
+      DNS1: '10.0.0.2#5054'
+      DNS2: ''
+      IPv6: 'false'
+      DNSMASQ_LISTENING: all
+      TZ: ${TZ}
+      WEBPASSWORD : ${WEBPASSWORD} # WEBPASSWORD: 'set a secure password here or it will be random'
+    networks:
+      pihole_net:
+        ipv4_address: 10.0.0.3
+      # Volumes store your data between container upgrades
+    volumes:
+      - './etc-pihole/:/etc/pihole/'
+      - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
+      # run `touch ./var-log/pihole.log` first unless you like errors
+      # - './var-log/pihole.log:/var/log/pihole.log'
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1
+    # Recommended but not required (DHCP needs NET_ADMIN)
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+networks:
+  pihole_net:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.0.0.0/29
