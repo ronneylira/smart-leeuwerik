@@ -36,7 +36,7 @@ services:
       - './etc-pihole/:/etc/pihole/'
       - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
       # your certificates path
-      - './etc-letsencrypt/archive/ronneylira.com/:/home/certificates/'
+      - './etc-letsencrypt/certificates/:/home/certificates/'
       - './external.conf:/etc/lighttpd/external.conf'
     dns:
       - 127.0.0.1
@@ -54,6 +54,7 @@ services:
     volumes:
       - ./etc-letsencrypt:/etc/letsencrypt
       - ./etc-dnsrobocert:/etc/dnsrobocert
+      - ./etc-letsencrypt/renewal-hooks/deploy/copy-certs.sh:/usr/local/bin/copy-certs
     environment:
       - VERSION=latest
     restart: always
