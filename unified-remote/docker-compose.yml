@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  unified-remote:
+    build: .
+    container_name: unified-remote
+    ports:
+      - "8165:8165"
+    volumes:
+      - ./etc-unified-remote/urserver:/opt/urserver/
+      - ./etc-unified-remote/logs:/.urserver/
+    restart: unless-stopped
+    network_mode: "host"
