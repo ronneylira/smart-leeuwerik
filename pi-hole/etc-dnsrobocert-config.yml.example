@@ -1,0 +1,11 @@
+#https://dnsrobocert.readthedocs.io/en/latest/user_guide.html
+draft: true
+acme:
+  email_account: john.doe@example.net
+  staging: true
+profiles:
+- name: henet_profile
+  provider: henet
+  provider_options:
+    auth_username: USER
+    auth_password: PASSWD

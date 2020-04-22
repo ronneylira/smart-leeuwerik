@@ -9,7 +9,7 @@ services:
     networks:
       pihole_net:
         ipv4_address: 10.0.0.2
-
+  #https://www.netweaver.uk/letsencrypt-ssl-pihole/
   pi-hole:
     container_name: pi-hole
     image: pihole/pihole:latest
@@ -35,8 +35,9 @@ services:
     volumes:
       - './etc-pihole/:/etc/pihole/'
       - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
-      # run `touch ./var-log/pihole.log` first unless you like errors
-      # - './var-log/pihole.log:/var/log/pihole.log'
+      # your certificates path
+      - './etc-letsencrypt/certificates/:/home/certificates/'
+      - './external.conf:/etc/lighttpd/external.conf'
     dns:
       - 127.0.0.1
       - 1.1.1.1
@@ -45,6 +46,19 @@ services:
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
+
+  dnsrobocert:
+    image: adferrand/dnsrobocert
+    container_name: dnsrobocert
+    env_file: .env
+    volumes:
+      - ./etc-letsencrypt:/etc/letsencrypt
+      - ./etc-dnsrobocert:/etc/dnsrobocert
+      - ./etc-letsencrypt/renewal-hooks/deploy/copy-certs.sh:/usr/local/bin/copy-certs
+    environment:
+      - VERSION=latest
+    restart: always
+
 networks:
   pihole_net:
     driver: bridge
