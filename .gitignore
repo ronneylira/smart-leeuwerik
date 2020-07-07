@@ -15,4 +15,5 @@
 **/ota.yaml
 **.gitignore
 **/external.conf
-**/config.yml
+**/*config.yml
+**/*.pem
