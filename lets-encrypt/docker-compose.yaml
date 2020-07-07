@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+    dnsrobocert:
+        image: adferrand/dnsrobocert
+        container_name: dnsrobocert
+        env_file: .env
+        volumes:
+          - ./etc-letsencrypt:/etc/letsencrypt
+          - ./etc-dnsrobocert:/etc/dnsrobocert
+          - ./etc-letsencrypt/renewal-hooks/deploy/copy-certs.sh:/usr/local/bin/copy-certs
+        environment:
+          - VERSION=latest
+        restart: always
+volumes:
+    - letsencrypt: '../pi-hole/etc-letsencrypt'
+    - dnsrobocert: '../pi-hole/etc-dnsrobocert'
