@@ -5,6 +5,9 @@ services:
     container_name: cloudflared
     image: visibilityspots/cloudflared:amd64
     restart: unless-stopped
+    environment:
+      DNS1: '172.64.36.1'
+      DNS2: '172.64.36.2'
     #user: root
     networks:
       pihole_net:
@@ -36,7 +39,7 @@ services:
       - './etc-pihole/:/etc/pihole/'
       - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
       # your certificates path
-      - './etc-letsencrypt/certificates/:/home/certificates/'
+      - './certificates/:/home/certificates/'
       - './external.conf:/etc/lighttpd/external.conf'
     dns:
       - 127.0.0.1
@@ -55,6 +58,7 @@ services:
       - ./etc-letsencrypt:/etc/letsencrypt
       - ./etc-dnsrobocert:/etc/dnsrobocert
       - ./etc-letsencrypt/renewal-hooks/deploy/copy-certs.sh:/usr/local/bin/copy-certs
+      - ./certificates:/etc/pihole-certificates
     environment:
       - VERSION=latest
     restart: always
