@@ -1,7 +1,7 @@
 esphome:
     name: frontdoorlight
     platform: ESP8266
-    board: nodemcu
+    board: esp01_1m
 
 <<: !include secrets.yaml
     
@@ -17,5 +17,5 @@ api:
 
 switch:
     - platform: gpio
-      name: "Living Room led"
+      name: "Front door light"
       pin: 2
